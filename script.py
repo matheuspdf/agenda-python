@@ -41,6 +41,38 @@ def excluir_contato(contato):
     print(f'{contato} foi excluído(a) dos seus contatos')
 
 
+def imprimir_menu():
+    print('1 - Mostrar todos os contatos da agenda')
+    print('2 - Buscar contato')
+    print('3 - Incluir contato')
+    print('4 - Editar contato')
+    print('5 - Excluir contato')
+    print('0 - Fechar agenda')
+
+
+imprimir_menu()
+
+opcao = input('Escolha uma opção: ')
+if opcao == '1':
+    mostrar_contatos()
+elif opcao == '2':
+    contato = input('Digite o nome do contato: ')
+    buscar_contato(contato)
+elif opcao == '3' or opcao == '4':
+    contato = input('Digite o nome do contato: ')
+    telefone = input('Digite o telefone do contato: ')
+    email = input('Digite o email do contato: ')
+    endereco = input('Digite o endereço: ')
+    incluir_editar_contato(contato, telefone, email, endereco)
+elif opcao == '5':
+    contato = input('Digite o nome do contato: ')
+    excluir_contato(contato)
+elif opcao == '0':
+    print('Fechando agenda')
+else:
+    print('Opção inválida')
+
+
 incluir_editar_contato('maria', '990908989', 'maria@gmail.com', 'Rua ABC')
 mostrar_contatos()
 excluir_contato('matheus')
