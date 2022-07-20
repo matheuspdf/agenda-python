@@ -1,27 +1,10 @@
-import email
-from mailbox import NotEmptyError
-
-
 AGENDA = {}
-
-
-AGENDA['matheus'] = {
-    'telefone': '956872345',
-    'email': 'matheus@mail.com',
-    'endereco': 'Rua 1',
-}
-AGENDA['joão'] = {
-    'telefone': '989567845',
-    'email': 'joao@mail.com',
-    'endereco': 'Rua 2',
-}
 
 
 def mostrar_contatos():
     if AGENDA:
         for contato in AGENDA:
             buscar_contato(contato)
-            print('-------------------')
     else:
         print('>>>>> Agenda vazia')
 
@@ -54,12 +37,16 @@ def incluir_editar_contato(contato, telefone, email, endereco):
         'email': email,
         'endereco': endereco,
     }
+    salvar()
+    print()
     print(f">>>>{contato} foi adicionado(a)/editado nos seus contatos.<<<<")
+    print()
 
 
 def excluir_contato(contato):
     try:
         AGENDA.pop(contato)
+        salvar()
         print(f'>>>>>{contato} foi excluído(a) dos seus contatos')
     except KeyError:
         print('>>>>> Contato inexistênte')
@@ -68,10 +55,9 @@ def excluir_contato(contato):
         print(error)
 
 
-def exportar_contato():
+def exportar_contatos(nome_do_arquivo):
     try:
-        with open('agenda.csv', 'w') as arquivo:
-            arquivo.write('nome,telefone,email,endereco\n')
+        with open(nome_do_arquivo, 'w') as arquivo:
             for contato in AGENDA:
                 telefone = AGENDA[contato]['telefone']
                 email = AGENDA[contato]['email']
@@ -102,6 +88,36 @@ def importar_contatos(nome_do_arquivo):
         print(error)
 
 
+def salvar():
+    exportar_contatos('database.csv')
+
+
+def carregar():
+    try:
+        with open('database.csv', 'r') as arquivo:
+            linhas = arquivo.readlines()
+            for linha in linhas:
+                detalhes = linha.strip().split(',')
+
+                nome = detalhes[0]
+                telefone = detalhes[1]
+                email = detalhes[2]
+                endereco = detalhes[3]
+
+                AGENDA[nome] = {
+                    'telefone': telefone,
+                    'email': email,
+                    'endereco': endereco,
+                }
+        print('>>>>> Database carregado com sucesso')
+        print(f'>>>>> {len(AGENDA)} contatos carregados')
+    except FileNotFoundError:
+        print('>>>>> Arquivo não encontrado')
+    except Exception as error:
+        print('>>>>> Algum erro inesperado ocorreu')
+        print(error)
+
+
 def imprimir_menu():
     print('---------------------------------------')
     print('1 - Mostrar todos os contatos da agenda')
@@ -115,6 +131,10 @@ def imprimir_menu():
     print('---------------------------------------')
 
 
+carregar()
+
+
+# Início do programa
 while True:
     imprimir_menu()
 
@@ -148,7 +168,8 @@ while True:
         contato = input('Digite o nome do contato: ')
         excluir_contato(contato)
     elif opcao == '6':
-        exportar_contato()
+        nome_do_arquivo = input('Digite o nome do arquivo a ser exportado: ')
+        exportar_contatos(nome_do_arquivo)
     elif opcao == '7':
         nome_do_arquivo = input('Digite o nome do arquivo a ser importado: ')
         importar_contatos(nome_do_arquivo)
@@ -157,9 +178,3 @@ while True:
         break
     else:
         print('Opção inválida')
-
-
-incluir_editar_contato('maria', '990908989', 'maria@gmail.com', 'Rua ABC')
-mostrar_contatos()
-excluir_contato('matheus')
-mostrar_contatos()
